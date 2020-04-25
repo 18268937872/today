@@ -4,8 +4,17 @@ import Login from '../series/login'
 import newtaskCon from '../series/addTaskCon'
 // 今日任务获取
 import getTask from '../series/getTask'
-export  {
-    Login,
-    newtaskCon,
-    getTask
+// 获取任务详情
+import getCradContent from '../series/getCradContent.js'
+// 打卡
+import setCradState from '../series/setCradState'
+// 获取海报内容
+import getPoster from '../series/getPostersCon'
+export {
+  Login,
+  newtaskCon,
+  getTask,
+  getCradContent,
+  setCradState,
+  getPoster
 }

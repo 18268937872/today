@@ -1,10 +1,10 @@
 <template>
     <div class="task">
         <div class="main">
-            <header class="header">今日任务({{TaskState.b}}/{{TaskState.a}})</header>
+            <header class="header">今日任务({{TaskState.b | 0}}/{{TaskState.a | 0}})</header>
             <div class="cont" v-if="ShowTask">
                 <ul>
-                    <li v-for="(item,index) in TaskList.taskList" :key="index"><span>{{item.title}}</span><span>{{item.completeType | value?'已完成':'未完成'}}</span></li>
+                    <li v-for="(item,index) in TaskList.taskList" :key="index"><span>{{item.title}}</span><span @click="btnTask(item.id)">{{item.completeType | value?'已完成':'未完成'}}</span></li>
                 </ul>
             </div>
             <div class="NoTask" v-if="!ShowTask">
@@ -24,25 +24,30 @@ export default {
             TaskList:[],
             ShowTask:false,
             loading:true,
-            TaskState:{}
+            TaskState:{},
+            taskType:''
         }
     },
+    onLoad(options){
+        let {taskType} = options
+        this.taskType = taskType
+        this.TaskList = []
+        this.TaskState = {}
+    },
     onShow(){
-        wx.showLoading({title:'数据加载中...'})
         this.getCard()
-        wx.hideLoading()
     },
     methods:{
         //新建任务
         newtask(){
-            wx.navigateTo({url:`/pages/newCard/main?taskType=学习打卡`})
+            wx.navigateTo({url:`/pages/newCard/main?taskType=${this.taskType}`})
         },
         getCard(){ // 获取今日任务列表
             let id = JSON.parse(wx.getStorageSync('userInfo')).openid
             let info = {
                 nowDate:'2020-4-24',
                 userOpid:id,
-                taskType:'学习打卡'
+                taskType:this.taskType
             }
            getTask(info).then(res=>{
                 if(res.code === 0){
@@ -65,6 +70,11 @@ export default {
                 }
             }
             this.TaskState = {a,b}
+        },
+        // 跳转到任务详情
+        btnTask(cardId){
+            let id = this.TaskList._id
+            wx.navigateTo({url:`/pages/card/main?cardId=${cardId}&id=${id}&taskType=${this.taskType}`})
         }
     }
 }
