@@ -31,18 +31,16 @@ export default {
 .main {
     padding-top: 20rpx;
     background-color: #f0f0f0;
-    height: 100vh;
+    min-height: 100vh;
 }
 .cont {
     width: 700rpx;
-    height: 440rpx;
     margin: 0 auto;
     margin-bottom: 20rpx;
-    clear: both;
 }
 .cont-img {
     width: 100%;
-    height: 240rpx;
+    height: 280rpx;
 }
 .cont-img img {
     width: 100%;
@@ -54,20 +52,21 @@ export default {
     box-sizing: border-box;
     width: 100%;
     padding: 0 25rpx;
-    height: 200rpx;
+    height: 240rpx;
     margin: 0 auto;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     background: #fff;
 }
 .cont-instructions h3 {
-    padding: 20rpx 0;
+    padding: 25rpx 0;
     font-size: 20px;  
 }
 .btn {
     box-sizing: border-box;
     text-align: center;
     padding: 20rpx 0;
+    margin-top: 20rpx;
     display: block;
     border-radius: 20px;
     background: #409EFF;
