@@ -1,25 +1,72 @@
 <template>
     <div class="task">
         <div class="main">
-            <header class="header">今日任务(4/5)</header>
-            <div class="cont">
+            <header class="header">今日任务({{TaskState.b}}/{{TaskState.a}})</header>
+            <div class="cont" v-if="ShowTask">
                 <ul>
-                    <li><span>今天好好学习今天好好学习今天好好学习</span><span>已完成</span></li>
-                    <li><span>今天好好学习今天好好学习今天好好学习</span><span>已完成</span></li>
-                    <li><span>今天好好学习今天好好学习今天好好学习</span><span>未完成</span></li>
-                    <li><span>今天好好学习今天好好学习今天好好学习</span><span>已完成</span></li>
-                    <li><span>今天好好学习今天好好学习今天好好学习</span><span>未完成</span></li>
-                    <li><span>今天好好学习今天好好学习今天好好学习</span><span>已完成</span></li>
+                    <li v-for="(item,index) in TaskList.taskList" :key="index"><span>{{item.title}}</span><span>{{item.completeType | value?'已完成':'未完成'}}</span></li>
                 </ul>
             </div>
+            <div class="NoTask" v-if="!ShowTask">
+                暂无打卡任务！
+            </div>
         </div>
-        <div class="newTask">+</div>
+        <div class="newTask" @click="newtask">+</div>
     </div>
 </template>
 
 <script>
+import {getTask} from '../../../static/server/controller/index'
 export default {
-
+    name:'task',
+    data(){
+        return {
+            TaskList:[],
+            ShowTask:false,
+            loading:true,
+            TaskState:{}
+        }
+    },
+    onShow(){
+        wx.showLoading({title:'数据加载中...'})
+        this.getCard()
+        wx.hideLoading()
+    },
+    methods:{
+        //新建任务
+        newtask(){
+            wx.navigateTo({url:`/pages/newCard/main?taskType=学习打卡`})
+        },
+        getCard(){ // 获取今日任务列表
+            let id = JSON.parse(wx.getStorageSync('userInfo')).openid
+            let info = {
+                nowDate:'2020-4-24',
+                userOpid:id,
+                taskType:'学习打卡'
+            }
+           getTask(info).then(res=>{
+                if(res.code === 0){
+                    this.TaskList = res.data[0]
+                    this.ShowTask = true
+                    this.getState()
+                    this.loading = true
+                }else{
+                     this.loading = false
+                }
+            })
+        },
+        getState(){ // 任务完成度
+            let list = this.TaskList.taskList
+            let a = list.length
+            let b = 0
+            for(let i in list){
+                if(list[i].completeType){
+                    b++
+                }
+            }
+            this.TaskState = {a,b}
+        }
+    }
 }
 </script>
 
@@ -71,5 +118,9 @@ export default {
     background: #409EFF;
     color: #fff;
     font-size: 60rpx;
+}
+.NoTask {
+    margin-top: 60rpx;
+    text-align: center;
 }
 </style>

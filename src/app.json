@@ -1,8 +1,10 @@
 {
   "pages": [
-    "pages/home/main",
-    "pages/personal/main",
     "pages/task/main",
+    "pages/newCard/main",
+    "pages/card/main",
+    "pages/personal/main",
+    "pages/home/main",
     "pages/index/main",
     "pages/logs/main",
     "pages/counter/main"
