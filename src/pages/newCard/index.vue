@@ -29,16 +29,13 @@ export default {
     },
     methods:{
         newCradBtn(){
+            wx.showLoading({})
             newtaskCon(this.info).then(res=>{
+               
                 if(res.code === 0){
-                   wx.showToast({
-                       title:'新建任务完成',
-                       icon:'success'
-                   })
-                    setTimeout(()=>{
-                        wx.navigateBack({delta: 1})
-                    },2000)
-                    
+                    wx.hideLoading()
+                    wx.navigateBack({delta: 1})
+                    this.info = {}                
                 }
             })
         }

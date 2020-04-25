@@ -6,7 +6,7 @@
           </div>
           <div class="cont-instructions">
               <h3>学习打卡</h3>
-              <div class="btn">已完成</div>
+              <div class="btn" @click="btnTask('学习打卡')">去打卡</div>
           </div>
       </div>
       <div class="cont">
@@ -15,7 +15,7 @@
           </div>
           <div class="cont-instructions">
               <h3>生活打卡</h3>
-              <div class="btn">去打卡</div>
+              <div class="btn" @click="btnTask('生活打卡')">去打卡</div>
           </div>
       </div>
   </div>
@@ -23,7 +23,12 @@
 
 <script>
 export default {
-
+    name:'home',
+    methods:{
+        btnTask(tesk){
+            wx.navigateTo({url:`/pages/task/main?taskType=${tesk}`})
+        }
+    }
 }
 </script>
 
