@@ -14,20 +14,20 @@
     <div class="nav">
       <ul>
         <li>
-          <span class="iconfont">&#xe6d3;</span>
-          <span>我的打卡</span>
+          <i class="iconfont">&#xe6d3;</i>
+          <p>我的打卡</p>
         </li>
         <li>
-          <span class="iconfont">&#xe635;</span>
-          <span>排名榜</span>
+          <i class="iconfont">&#xe635;</i>
+          <p>排名榜</p>
         </li>
         <li>
-          <span class="iconfont">&#xe661;</span>
-          <span>意见反馈</span>
+          <i class="iconfont">&#xe661;</i>
+          <p>意见反馈</p>
         </li>
         <li>
-          <span class="iconfont">&#xe6af;</span>
-          <span>设置</span>
+          <i class="iconfont">&#xe6af;</i>
+          <p>设置</p>
         </li>
       </ul>
     </div>
@@ -109,14 +109,22 @@ export default {
   padding: 0 25rpx;
 }
 .nav ul li {
+  display: flex;
   height: 120rpx;
   line-height: 120rpx;
   font-size: 16px;
   margin-top: 10rpx;
-  border-bottom: 1px solid #eee;
-}
-.nav ul li:nth-last-child(1) {
-  border-bottom: none;
 }
 /* 图标 */
+.nav ul li p {
+  width: 650rpx;
+  border-bottom: 1px solid #eee;
+}
+.nav ul li:nth-last-child(1) p {
+  border-bottom: none;
+}
+.iconfont {
+  width: 50rpx;
+  margin-right: 10rpx;
+}
 </style>
