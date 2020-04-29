@@ -1,87 +1,150 @@
 <template>
-<div>
+<div :class="showPoat?'poat-bag':null" v-if="showPoat">
     <canvas canvas-id="myCanvas" class="post-canvas"></canvas>
-    <div class="post-img">
-        <img :src="imgUrl">
-        <div @click="saveImg" class="save-btn">保存图片</div>
+    <div class="post-img" v-if="showImg">
+        <img :src="imgUrl" @touchstart="saveImg">
+        <span @click="hideImg">x</span>
     </div>
 </div>
   
 </template>
 
 <script>
+import promisify from '../utils/promisify'
+let getImageInfo = promisify(wx.getImageInfo) 
 export default {
     name:'posters',
     data(){
         return {
             imgUrl:'',
+            showImg:false,
+            Showsave:true,
+            showPoat:true
         }
     },
-    onLoad(){
-        this.drawPoster()
-    },
     methods:{
-        drawPoster(){
+        hideImg(){
+            this.showPoat = false
+        },
+        drawPoster(info,userData){
+            let {action,adhere} = info
+            let {nickName,avatarUrl} = userData
+            let getWidth = wx.getSystemInfoSync()
+            let deviceWidth = getWidth.screenWidth
+            const rpx2px = rpx=>(deviceWidth / 750)<1?rpx:deviceWidth / 750*rpx*2
+            wx.showLoading({
+                title:'正在生成海报'
+            })
+            // const imgInfo = await getImageInfo(avatarUrl)
+            // console.log(imgInfo)
+            let url1 = '../../static/images/posters.jpg'
             let ctx = wx.createCanvasContext('myCanvas')
             let imgPath = '../../static/images/posters.jpg';
+            const imgBag_w = rpx2px(375*2)
+            const imgBag_h = rpx2px(667*2)
             ctx.drawImage(
-                imgPath,0,0,375*2,667*2
+                imgPath,0,0,imgBag_w,imgBag_h
             )
+            console.log(6)
             // 绘制每日一句
             ctx.textAlign = 'start'
             ctx.fillStyle = '#fff'
-            ctx.font = '36px arail';
-            this.newline('环境永远不会十全十美，消极的人受环境控制',550,ctx)
-            
+            const daily_font =  rpx2px(36)
+            ctx.font = `${daily_font}px arail`;
+            const daily_w = rpx2px(550)
+            this.newline('环境永远不会十全十美，消极的人受环境控制',daily_w,ctx,rpx2px)
             // 绘制用户信息
             ctx.fillStyle = '#fff'
             // 绘制矩形容器
-            ctx.fillRect(32.5*2,380*2,300*2,150*2)
+            const fillRect_x = rpx2px(32.5*2)
+            const fillRect_y = rpx2px(380*2)
+            const fillRect_w = rpx2px(300*2)
+            const fillRect_h = rpx2px(150*2)
+            ctx.fillRect(fillRect_x,fillRect_y,fillRect_w,fillRect_h)
             ctx.save();
             // 绘制头像
             ctx.lineWidth=.1;
             ctx.beginPath()
-            ctx.arc(70*2,420*2,20*2,-20*2,Math.PI*3/2);
+            const arcA1 = rpx2px(70*2)
+            const arcA2 = rpx2px(420*2)
+            const arcA3 = rpx2px(20*2)
+            const arcA4 = rpx2px(-20*2)
+            ctx.arc(arcA1,arcA2,arcA3,arcA4,Math.PI*3/2);
             ctx.stroke()
             // 放置头像
             ctx.save();
-            let userImg = '../../static/images/5.jpg';
+            let userImg = avatarUrl;
             ctx.clip();
-            ctx.drawImage(userImg,50*2,400*2,40*2,40*2)
+            const userImage1 = rpx2px(50*2)
+            const userImage2 = rpx2px(400*2)
+            const userImage3 = rpx2px(40*2)
+            const userImage4 = rpx2px(40*2)
+            ctx.drawImage(url1,userImage1,userImage2,userImage3,userImage4)
             // 绘制用户名
             ctx.restore();
-            ctx.font = '36px arail';
+            let nickName_font = rpx2px(36)
+            ctx.font = `${nickName_font}px arail`;
             ctx.fillStyle = '#000'
-            ctx.fillText('叶小秋',100*2,420*2)
+            const nickName_con1 = rpx2px(100*2)
+            const nickName_con2 = rpx2px(420*2)
+            ctx.fillText(nickName,nickName_con1,nickName_con2)
             ctx.fillStyle = '#333'
-            ctx.font = '24px arail'
-            ctx.fillText('在(今天你打卡了吗)完成打卡',100*2,440*2)
+            const nickName_font_con = rpx2px(24)
+            ctx.font = `${nickName_font_con}px arail`
+            const nickName_con_x = rpx2px(100*2)
+            const nickName_con_y = rpx2px(440*2)
+            ctx.fillText('在(今天你打卡了吗)完成打卡',nickName_con_x,nickName_con_y)
             // 绘制累计打卡
             ctx.fillStyle = '#333'
-            ctx.font = '24px arail'
-            ctx.fillText('累计打卡',80*2,470*2)
-            ctx.font = '40px arail'
+            const adhere_font = rpx2px(24)
+            ctx.font = `${adhere_font}px arail`
+            const adhere_con1 = rpx2px(80*2)
+            const adhere_con2 = rpx2px(470*2)
+            ctx.fillText('累计打卡',adhere_con1,adhere_con2)
+            const adhere_font_con = rpx2px(40)
+            ctx.font = `${adhere_font_con}px arail`
             ctx.fillStyle = '#000'
-            ctx.fillText('1天',85*2,500*2)
+            const  adhere_x = rpx2px(85*2)
+            const  adhere_y = rpx2px(500*2)
+            ctx.fillText(`${adhere}天`,adhere_x,adhere_y)
             // 绘制行动力
             ctx.fillStyle = '#333'
-            ctx.font = '28px arail'
-            ctx.fillText('行动力',210*2,470*2)
-            ctx.font = '40px arail'
+            const action_font = rpx2px(28)
+            ctx.font = `${action_font}px arail`
+            const action_con1 = rpx2px(210*2)
+            const action_con2 = rpx2px(470*2)
+            ctx.fillText('行动力超过',action_con1,action_con2)
+            const action_font_2 = rpx2px(40)
+            ctx.font = `${action_font_2}px arail`
             ctx.fillStyle = '#000'
-            ctx.fillText('64%',210*2,500*2)
+            const action_con_x = rpx2px(210*2)
+            const action_con_y = rpx2px(500*2)
+            ctx.fillText(`${action}%`,action_con_x,action_con_y)
             ctx.fillStyle = '#333'
-            ctx.font = '28px arail'
-            ctx.fillText('的成员',255*2,500*2)
-
+            const action_font_3 = rpx2px(28)
+            ctx.font = `${action_font_3}px arail`
+            const action_con_tit1 = rpx2px(255*2)
+            const action_con_tit2 = rpx2px(500*2)
+            ctx.fillText('的成员',action_con_tit1,action_con_tit2)
             // 绘制二维码
             ctx.fillStyle = '#fff'
-            ctx.fillRect(32.5*2,550*2,300*2,80*2);
+            const nameImg_con_1 = rpx2px(32.5*2)
+            const nameImg_con_2 = rpx2px(550*2)
+            const nameImg_con_3 = rpx2px(300*2)
+            const nameImg_con_4 = rpx2px(80*2)
+            ctx.fillRect(nameImg_con_1,nameImg_con_2,nameImg_con_3,nameImg_con_4);
             let nameImg = '../../static/images/user.jpg'
-            ctx.drawImage(nameImg,50*2,565*2,50*2,50*2)
+            const nameImg_img1 = rpx2px(50*2)
+            const nameImg_img2 = rpx2px(565*2)
+            const nameImg_img3 = rpx2px(50*2)
+            const nameImg_img4 = rpx2px(50*2)
+            ctx.drawImage(nameImg,nameImg_img1,nameImg_img2,nameImg_img3,nameImg_img4)
             ctx.fillStyle = '#000'
-            ctx.font = '32px arail'
-            ctx.fillText('今天你打卡了吗',105*2,590*2)
+            const nameImg_font = rpx2px(32)
+            ctx.font = `${nameImg_font}px arail`
+            const nameImg_con_x = rpx2px(105*2)
+            const nameImg_con_y = rpx2px(590*2)
+            ctx.fillText('今天你打卡了吗',nameImg_con_x,nameImg_con_y)
             ctx.draw()
                         // 保存图片
                         // const strDataURL = Canvas.toDataURL('image/png')
@@ -89,28 +152,21 @@ export default {
                             wx.canvasToTempFilePath({
                                 x: 0,
                                 y: 0,
-                                // width: 750,
-                                // height: 1334,
-                                // destWidth: 750,
-                                // destHeight: 1334,
-                                // fileType:'jpg',
                                 canvasId: 'myCanvas',
                                 success:(res)=>{
                                     this.imgUrl = res.tempFilePath
-                                    console.log(this.imgUrl)
-                                    // console.log(res.tempFilePath)
-                                    // wx.saveImageToPhotosAlbum({
-                                    //     filePath:res.tempFilePath,
-                                    //     success(){
-                                    //         console.log('图片保存成功')
-                                    //     }
-                                    // })
+                                    wx.hideLoading
+                                    wx.showToast({
+                                        title:'海报生成成功',
+                                        icon:'success'
+                                    })
+                                    this.showImg = true
                                 }
                             })
                         },2000)
         },
         // 文字自动换行
-        newline(cont,w,ctx){
+        newline(cont,w,ctx,rpx2px){
             let str = cont.split('')
             let loop = ''
             let temp = []
@@ -122,13 +178,20 @@ export default {
                 loop +=str[i]
             }
             temp.push(loop)
-
             // 绘制文字
             for(let j in temp){
-                ctx.fillText(temp[j],80,160+j*50)
+                const con_x = rpx2px(80)
+                const con_y = rpx2px(160+j*50)
+                console.log(con_x)
+                ctx.fillText(temp[j],con_x,con_y)
             }
         },
         saveImg(){ // 长按保存
+            if(!this.Showsave){
+                return wx.showToast({
+                    title:'图片已经保存'
+                })
+            }
             let that = this
             wx.getSetting({
                 success(res){
@@ -176,6 +239,7 @@ export default {
                 }
 
             })
+            this.Showsave = false
 
         },
         
@@ -184,6 +248,14 @@ export default {
 </script>
 
 <style scoped>
+.poat-bag{
+    background: rgba(0, 0, 0, 0.7);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
 .post-canvas {
     position: absolute;
     top: -9999px;
@@ -198,10 +270,26 @@ export default {
     transform: translate(-50%,-50%);
     width: 600rpx;
     height: 1067rpx;
+    border-radius: 5px;
 }
 .post-img img {
+    position: relative;
     width: 100%;
     height: 100%;
+    border-radius: 5px;
+}
+.post-img span{
+    position: absolute;
+    top: -50rpx;
+    right: 0;
+    border-radius: 50%;
+    border: 1px solid #fff;
+    font-size: 16px;
+    width: 40rpx;
+    height: 40rpx;
+    text-align: center;
+    line-height: 40rpx;
+    color: #fff;
 }
 .save-btn {
     height: 60rpx;
