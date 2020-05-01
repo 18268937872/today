@@ -1,13 +1,13 @@
 {
   "pages": [
-    "pages/logs/main",
+    "pages/personal/main",
     "pages/home/main",
     "pages/task/main",
     "pages/newCard/main",
     "pages/card/main",
-    "pages/personal/main",
-    "pages/index/main",
     
+    "pages/index/main",
+    "pages/logs/main",
     "pages/counter/main"
   ],
   "window": {
@@ -24,7 +24,7 @@
 
     "list": [{
       "text": "首页",
-      "pagePath": "pages/index/main",
+      "pagePath": "pages/personal/main",
       "iconPath": "static/tabs/home.png",
       "selectedIconPath": "static/tabs/home-active.png"
     }, {
