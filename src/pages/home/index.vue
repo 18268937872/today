@@ -2,7 +2,7 @@
   <div class="main">
       <div class="cont">
           <div class="cont-img">
-              <img src="../../../static/images/home.jpg" alt="">
+              <img src="../../../static/images/xuexi.jpg" alt="">
           </div>
           <div class="cont-instructions">
               <h3>学习打卡</h3>
@@ -11,7 +11,7 @@
       </div>
       <div class="cont">
           <div class="cont-img">
-              <img src="../../../static/images/home.jpg" alt="">
+              <img src="../../../static/images/shenghuo.jpg" alt="">
           </div>
           <div class="cont-instructions">
               <h3>生活打卡</h3>
@@ -26,7 +26,21 @@ export default {
     name:'home',
     methods:{
         btnTask(tesk){
-            wx.navigateTo({url:`/pages/task/main?taskType=${tesk}`})
+            if (!wx.getStorageSync('userInfo')) {
+                wx.showModal({
+                title: '未登录',
+                content: '你还没有登录,请先登录!',
+                success (res) {
+                    if (res.confirm) {
+                    wx.switchTab({ url: '/pages/personal/main' })
+                    } else if (res.cancel) {
+                    return false
+                    }
+                }
+                })
+            }else{
+                wx.navigateTo({url:`/pages/task/main?taskType=${tesk}`})
+            }
         }
     }
 }
@@ -34,14 +48,15 @@ export default {
 
 <style scoped>
 .main {
-    padding-top: 20rpx;
     background-color: #f0f0f0;
-    min-height: 100vh;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 .cont {
     width: 700rpx;
     margin: 0 auto;
-    margin-bottom: 20rpx;
+    margin-top: 20rpx;
 }
 .cont-img {
     width: 100%;

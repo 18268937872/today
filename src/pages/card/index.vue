@@ -9,18 +9,28 @@
             </div>
             <div class="card-btn" @click="cradBtn">打卡</div>
         </div>
+        <Posters ref="poster" v-if="lock"></Posters>
     </div>
 </template>
 
 <script>
+import Posters from '@/components/posters'
 import {getCradContent,setCradState,getPoster} from '../../../static/server/controller'
+
 export default {
     name:'card',
     data(){
         return {
             cradList:{},
-            info:{}
+            info:{},
+            lock:false,
+            posterData:{},
+            userInfo:{},
+            showCrad:true
         }
+    },
+    components: {
+        Posters
     },
     onLoad(options){
         this.cradList = {}
@@ -28,42 +38,67 @@ export default {
         this.info = {id,cardId}
         getCradContent(this.info).then(res=>{
             this.cradList = res
+            res.completeType?this.showCrad = false:this.showCrad = true
         })
+
+    },
+    onShow(){
+        let nameData = JSON.parse(wx.getStorageSync('userInfo'))
+        this.userInfo = {
+            nickName:nameData.nickName,
+            avatarUrl:nameData.avatarUrl
+        }
     },
     methods:{
         cradBtn(){
+            if(!this.showCrad){
+                wx.showToast({
+                    title:'你已经打过卡了'
+                })
+                return
+            }
+            wx.showLoading({
+                title:'打卡中...'
+            })
+            this.showCrad = false
             let userOpid = JSON.parse(wx.getStorageSync('userInfo')).openid
             let tsakData = {
-                userOpid,
-                newDate:'2020-4-24'
+                userOpid
             }
             getPoster(userOpid).then(res=>{
-                console.log(res)
+                this.posterData = res
             })
-            // setCradState(this.info,tsakData,userOpid).then(res=>{
-            //     // 打卡成功
-            //     if(res.code === 0){
-            //         wx.showModal({
-            //             title:'提示',
-            //             content:'今日打卡已全部完成，是否去生成海报',
-            //             success(res){
-            //                 if(res.confirm){
-            //                     console.log('确定')
-            //                 }else if(res.cancel){
-            //                     console.log('取消')
-            //                 }
-            //             }
-            //         })
-            //     }else{
-            //         getCradContent(this.info).then(res=>{
-            //             this.cradList = res
-            //         })
-            //         wx.showToast({
-            //             title:'打卡成功',
-            //             icon:success
-            //         })
-            //     }
-            // })
+            setCradState(this.info,tsakData,userOpid).then(res=>{
+                wx.hideLoading()
+                let that = this
+                // 打卡成功
+                if(res.code === 0){
+                    wx.showModal({
+                        title:'提示',
+                        content:'今日打卡已全部完成，是否去生成海报',
+                        success(res){
+                            if(res.confirm){
+                                console.log('确定')
+                                that.lock = true
+                                that.$nextTick(()=>{
+                                    that.$refs.poster.drawPoster(that.posterData,that.userInfo)
+                                })
+                               
+                            }else if(res.cancel){
+                                console.log('取消')
+                            }
+                        }
+                    })
+                }else{
+                    getCradContent(this.info).then(res=>{
+                        this.cradList = res
+                    })
+                    wx.showToast({
+                        title:'打卡成功',
+                        icon:'success'
+                    })
+                }
+            })
         }
     }
 }
@@ -72,7 +107,9 @@ export default {
 <style scoped>
 .card {
     background: #f0f0f0;
-    height: 100vh;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 } 
 .main {
     padding-top: 20rpx;

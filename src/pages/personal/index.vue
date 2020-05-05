@@ -13,15 +13,15 @@
     </div>
     <div class="nav">
       <ul>
-        <li>
+        <li @click="routerJump(listRoutes.myclick)">
           <i class="iconfont">&#xe6d3;</i>
           <p>我的打卡</p>
         </li>
-        <li>
+        <li @click="routerJump(listRoutes.ranking)">
           <i class="iconfont">&#xe635;</i>
           <p>排名榜</p>
         </li>
-        <li>
+        <li @click="routerJump(listRoutes.feedback)">
           <i class="iconfont">&#xe661;</i>
           <p>意见反馈</p>
         </li>
@@ -42,6 +42,11 @@ export default {
     return {
       showLogin: false,
       userInfo: {},
+      listRoutes: {
+        ranking: "/pages/rankings/main",
+        feedback: "/pages/feedback/main",
+        myclick: "/pages/myClick/main"
+      }
     };
   },
   created() {
@@ -65,6 +70,24 @@ export default {
       // 用户登录修改状态
       this.showLogin = true;
       this.userInfo = userInfo;
+    },
+    routerJump(path) {
+      // 路由跳转
+      if (!wx.getStorageSync("userInfo")) {
+        wx.showModal({
+          title: "未登录",
+          content: "你还没有登录,请先登录!",
+          success(res) {
+            if (res.confirm) {
+              wx.switchTab({ url: "/pages/personal/main" });
+            } else if (res.cancel) {
+              return false;
+            }
+          }
+        });
+      } else {
+        wx.navigateTo({ url: path });
+      }
     }
   }
 };
@@ -72,8 +95,9 @@ export default {
 
 <style scoped>
 .main {
+  position: fixed;
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   background: #f0f0f0;
 }
 .user {

@@ -29,7 +29,9 @@ export default {
     },
     methods:{
         newCradBtn(){
-            wx.showLoading({})
+            wx.showLoading({
+                title:'任务创建中...'
+            })
             newtaskCon(this.info).then(res=>{
                
                 if(res.code === 0){
@@ -46,7 +48,9 @@ export default {
 <style scoped>
 .new-crad {
     background: #f0f0f0;
-    height: 100vh;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 .crad-div-main {
     width: 700rpx;

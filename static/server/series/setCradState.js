@@ -2,6 +2,8 @@
 import setState from '../model/setCradState'
 import getAll from '../model/getAllTask'
 import getUserTask from '../model/getUserTask'
+import batchDate from '../utils/index'
+import showClick from '../model/showClick'
 
 const setCradState = async (info, taskData, userOpid) => {
   // 打卡
@@ -14,10 +16,19 @@ const setCradState = async (info, taskData, userOpid) => {
   }
   let state = dataList.filter(v => v.completeType === true)
   if (state.length === dataList.length) {
+    const newDate = batchDate()
+    const newTime = new Date().getTime()
     let info = {
       userOpid,
-      newDate: '2020-4-24',
-      newTime: 123456789
+      newDate,
+      newTime
+    }
+    let showUser = await showClick({ userOpid, newDate })
+    if (showUser.data.length > 0) {
+      return {
+        msg: '打卡成功',
+        code: 1
+      }
     }
     let userData = await getUserTask(info)
     if (userData) {
